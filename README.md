@@ -2,7 +2,8 @@
 
 **nextShare** is a modern file-sharing web application built using **Next.js 15**, allowing users to upload files, generate shareable links, and even shorten the generated links for easier sharing. This app is powered by **Cloudinary** for file storage and uses **MongoDB** to log file uploads. Files automatically expire after 24 hours to ensure security and privacy.
 
-![image](https://github.com/user-attachments/assets/011a0b49-5f23-401f-9263-3c5049c2d90f)
+![Screenshot 2024-12-11 212647](https://github.com/user-attachments/assets/750ef5b4-2d72-4585-bd39-1f3d8dbea207)
+
 
 ---
 
