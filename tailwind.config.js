@@ -18,6 +18,27 @@ module.exports = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      animation: {
+        fadeIn: "fadeIn 0.3s ease-in-out",
+        'border-color': 'borderColorChange 3s infinite alternate'
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+        borderColorChange: {
+          '0%': {
+            borderColor: '#ff7e5f', // start color
+          },
+          '50%': {
+            borderColor: '#6a11cb', // middle color
+          },
+          '100%': {
+            borderColor: '#ff7e5f', // end color
+          },
+        },
+      },
     },
   },
   plugins: [addVariablesForColors],

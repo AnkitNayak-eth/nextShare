@@ -2,20 +2,22 @@
 import { useState, useRef, useEffect } from "react";
 import { FileUpload } from "./file-upload";
 import { BackgroundBeams } from "./background-beams";
+import { QRCodeCanvas } from "qrcode.react";
+import { BackgroundBeamsWithCollision } from "./background-beams-with-collision";
 
 export default function Home() {
   const apiUrl = process.env.NEXT_PUBLIC_API;
 
-
   const [file, setFile] = useState(null);
   const [url, setUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
-  const [isClient, setIsClient] = useState(false); // State to check if we're on the client
+  const [isClient, setIsClient] = useState(false);
+  const [showModal, setShowModal] = useState(false); // Modal state
 
-  const inputRef = useRef(null); // Reference for file input
+  const inputRef = useRef(null);
 
   useEffect(() => {
-    setIsClient(true); // Set to true after the component is mounted on the client
+    setIsClient(true);
   }, []);
 
   const handleFileUpload = (files) => setFile(files[0]);
@@ -28,7 +30,6 @@ export default function Home() {
     formData.append("file", file);
 
     try {
-      // Step 1: Upload the file and get the URL
       const res = await fetch("/api/upload", {
         method: "POST",
         body: formData,
@@ -38,12 +39,9 @@ export default function Home() {
         const data = await res.json();
         const uploadedUrl = data.url;
 
-        // Step 2: Shorten the URL using your sho-rt-ly API
         const shortenRes = await fetch(`${apiUrl}/shorten`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ originalUrl: uploadedUrl }),
         });
 
@@ -51,21 +49,16 @@ export default function Home() {
           const shortenData = await shortenRes.json();
           setUrl(`${apiUrl}/${shortenData.shortUrl}`);
         } else {
-          console.error("Failed to shorten URL");
-          setUrl(uploadedUrl); // Use the original URL if shortening fails
+          setUrl(uploadedUrl); // Fallback to original URL
         }
+        setShowModal(true); // Open modal on success
       } else {
         console.error("File upload failed");
       }
     } catch (error) {
       console.error("An error occurred during the upload process:", error);
     } finally {
-      // Reset states
       setIsUploading(false);
-      setFile(null);
-      if (inputRef.current) {
-        inputRef.current.value = "";
-      }
     }
   };
 
@@ -85,13 +78,18 @@ export default function Home() {
   };
 
   const handleCancelFile = () => {
-    setUrl(""); // Reset file when cancel is triggered
+    setUrl("");
   };
 
-  // Only render the component if we're on the client
-  if (!isClient) {
-    return null; // Or a loading spinner/message
-  }
+  const handleGenerateMore = () => {
+    // Reset states for a new upload
+    setFile(null);
+    setUrl("");
+    setShowModal(false);
+    if (inputRef.current) inputRef.current.value = "";
+  };
+
+  if (!isClient) return null;
 
   return (
     <div className="flex justify-center items-center h-[100vh] bg-neutral-950 relative">
@@ -102,10 +100,14 @@ export default function Home() {
         <p className="text-neutral-400 max-w-lg mx-auto my-2 text-base text-center relative z-10">
           A Secure and Seamless File Sharing App.<br></br> Upload files (up to
           100MB), share an encrypted link, and let nextShare ensure your files
-          are auto-deleted in 24 hours <br></br>Privacy Guaranteed !
+          are auto-deleted in 24 hours <br></br>Privacy Guaranteed!
         </p>
         <div className="flex flex-col items-center justify-center mt-8">
-          <FileUpload onChange={handleFileUpload} ref={inputRef} onCancel={handleCancelFile} />
+          <FileUpload
+            onChange={handleFileUpload}
+            ref={inputRef}
+            onCancel={handleCancelFile}
+          />
           <button
             onClick={handleUpload}
             disabled={isUploading || !file}
@@ -124,28 +126,54 @@ export default function Home() {
               "Upload"
             )}
           </button>
-          {url && (
-            <div className="mt-8 flex flex-col md:flex-row items-center space-x-4 md:space-x-4">
-              <input
-                type="text"
-                value={url}
-                readOnly
-                className="flex-grow rounded-lg py-2 px-4 border border-neutral-800 focus:ring-2 focus:ring-teal-500 bg-neutral-950 text-white placeholder:text-neutral-700 transition duration-300"
-                style={{
-                  minWidth: `${Math.max(250, url.length * 8)}px`,
-                }}
-                placeholder="Your file URL will appear here"
-              />
-              <button
-                onClick={handleCopy}
-                className="mt-4 md:mt-0 p-2 px-6 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition duration-300 shadow-md"
-              >
-                Copy
-              </button>
-            </div>
-          )}
         </div>
       </div>
+
+      {showModal && (
+        <div className="fixed flex inset-0 bg-black bg-opacity-60 justify-center items-center z-50">
+          <BackgroundBeamsWithCollision className="flex-col relative w-full h-full  bg-black p-6 rounded-2xl shadow-2xl max-w-md animate-fadeIn overflow-hidden">
+            {/* Modal Header */}
+            <h2 className="text-3xl font-extrabold mb-4 text-center text-white">
+          File Uploaded Successfully!
+            </h2>
+
+            {/* QR Code */}
+            <div className="flex justify-center mb-6">
+              <div className="p-[0.4rem] bg-white rounded-lg shadow-md">
+                <QRCodeCanvas value={url} size={160} className="rounded" />
+              </div>
+            </div>
+
+            {/* URL and Message */}
+            <p className="text-white text-sm text-center mb-6 leading-relaxed">
+              Your file has been uploaded, and a shareable link has been
+              generated. Copy the link or scan the QR code to access the file.
+            </p>
+            <div className="bg-gray-100 p-3 rounded-md mb-4">
+              <p className="text-center font-mono text-sm text-black break-all">
+                <strong>🔗 URL:</strong> {url}
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col gap-3 items-center">
+              <button
+                onClick={handleCopy}
+                className="w-full py-2 px-4 bg-teal-500 text-white font-semibold rounded-lg hover:bg-teal-600 focus:ring-2 focus:ring-teal-400 focus:ring-opacity-50 transition duration-300"
+              >
+                📋 Copy URL
+              </button>
+              <button
+                onClick={handleGenerateMore}
+                className="w-full py-2 px-4 bg-indigo-500 text-white font-semibold rounded-lg hover:bg-indigo-600 focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-50 transition duration-300"
+              >
+                ➕ Upload Another
+              </button>
+            </div>
+          </BackgroundBeamsWithCollision>
+        </div>
+      )}
+
       <BackgroundBeams />
     </div>
   );
