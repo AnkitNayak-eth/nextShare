@@ -4,6 +4,9 @@ import { FileUpload } from "./file-upload";
 import { BackgroundBeams } from "./background-beams";
 import { QRCodeCanvas } from "qrcode.react";
 import { BackgroundBeamsWithCollision } from "./background-beams-with-collision";
+import { FaLinkedin } from "react-icons/fa";
+import { FaTwitter } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 
 export default function Home() {
   const apiUrl = process.env.NEXT_PUBLIC_API;
@@ -91,16 +94,31 @@ export default function Home() {
 
   if (!isClient) return null;
 
+  const footerLinks = [
+    {
+      icon: <FaLinkedin className="h-6 w-6 " />,
+      href: "https://www.linkedin.com/in/ankitnayaketh/",
+    },
+    {
+      icon: <FaTwitter className="h-6 w-6 " />,
+      href: "https://x.com/AnkitNayak_eth",
+    },
+    {
+      icon: <FaGithub className="h-6 w-6 " />,
+      href: "https://github.com/AnkitNayak-eth",
+    },
+  ];
+
   return (
-    <div className="flex justify-center items-center h-[100vh] bg-neutral-950 relative">
+    <div className="flex justify-center items-center h-[100vh] bg-neutral-950 relative font-mono">
       <div className="w-full z-20 max-w-2xl p-4 -mt-32 ">
         <h1 className="relative p-8 z-10 text-5xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 text-center font-sans font-bold">
           NextShare
         </h1>
         <p className="text-neutral-400 max-w-lg mx-auto my-2 text-base text-center relative z-10">
           A Secure and Seamless File Sharing App.<br></br> Upload files (up to
-          100MB), share an encrypted link, and let nextShare ensure your files
-          are auto-deleted in 24 hours <br></br>Privacy Guaranteed!
+          100MB), Files expire automatically within 24 hours, ensuring privacy
+          and safety.
         </p>
         <div className="flex flex-col items-center justify-center mt-8">
           <FileUpload
@@ -126,15 +144,29 @@ export default function Home() {
               "Upload"
             )}
           </button>
+          <nav className="flex flex-row m-8 items-center gap-8">
+          {footerLinks.map((link, index) => (
+            <a
+              href={link.href}
+              key={index}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 transform hover:scale-150 transition-transform duration-300 ease-in-out"
+            >
+              <span>{link.icon}</span>
+            </a>
+          ))}
+        </nav>
         </div>
+        
       </div>
 
       {showModal && (
         <div className="fixed flex inset-0 bg-black bg-opacity-60 justify-center items-center z-50">
-          <BackgroundBeamsWithCollision className="flex-col relative w-full h-full  bg-black p-6 rounded-2xl shadow-2xl max-w-md animate-fadeIn overflow-hidden">
+          <BackgroundBeamsWithCollision className="flex-col relative w-full h-full  bg-black p-6 rounded-2xl shadow-2xl max-w-md overflow-hidden animate-border-color">
             {/* Modal Header */}
             <h2 className="text-3xl font-extrabold mb-4 text-center text-white">
-          File Uploaded Successfully!
+              File Uploaded Successfully!
             </h2>
 
             {/* QR Code */}
