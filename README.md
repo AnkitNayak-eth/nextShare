@@ -25,7 +25,7 @@
 - **Backend**: API routes in Next.js with MongoDB for logging
 - **Styling**: Tailwind CSS
 - **File Handling**: Cloudinary and Formidable
-- **Utilities**: Link shortening logic (powered by your ![link-shortening API project](https://github.com/AnkitNayak-eth/Trim-it-url-shortener)), file type validation, and QR code generation using `qrcode.react`
+- **Utilities**: Link shortening logic (powered by your [link-shortening API project](https://github.com/AnkitNayak-eth/Trim-it-url-shortener)), file type validation, and QR code generation using `qrcode.react`
 - **State Management**: Lightweight and local with React hooks
 - **Deployment**: Ready to deploy on Vercel or other Node.js platforms
 
