@@ -15,7 +15,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [showModal, setShowModal] = useState(false); // Modal state
+  const [showModal, setShowModal] = useState(false);
 
   const inputRef = useRef(null);
 
@@ -52,9 +52,9 @@ export default function Home() {
           const shortenData = await shortenRes.json();
           setUrl(`${apiUrl}/${shortenData.shortUrl}`);
         } else {
-          setUrl(uploadedUrl); // Fallback to original URL
+          setUrl(uploadedUrl);
         }
-        setShowModal(true); // Open modal on success
+        setShowModal(true); 
       } else {
         console.error("File upload failed");
       }
@@ -85,7 +85,7 @@ export default function Home() {
   };
 
   const handleGenerateMore = () => {
-    // Reset states for a new upload
+    
     setFile(null);
     setUrl("");
     setShowModal(false);
@@ -164,19 +164,17 @@ export default function Home() {
       {showModal && (
         <div className="fixed flex inset-0 bg-black bg-opacity-60 justify-center items-center z-50">
           <BackgroundBeamsWithCollision className="flex-col relative w-full h-full  bg-black p-6 rounded-2xl shadow-2xl max-w-md overflow-hidden animate-border-color">
-            {/* Modal Header */}
+
             <h2 className="text-3xl font-extrabold mb-4 text-center text-white">
               File Uploaded Successfully!
             </h2>
 
-            {/* QR Code */}
             <div className="flex justify-center mb-6">
               <div className="p-[0.4rem] bg-white rounded-lg shadow-md">
                 <QRCodeCanvas value={url} size={160} className="rounded" />
               </div>
             </div>
 
-            {/* URL and Message */}
             <p className="text-white text-sm text-center mb-6 leading-relaxed">
               Your file has been uploaded, and a shareable link has been
               generated. Copy the link or scan the QR code to access the file.
@@ -187,7 +185,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Buttons */}
             <div className="flex flex-col gap-3 items-center">
               <button
                 onClick={handleCopy}
