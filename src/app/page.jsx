@@ -151,7 +151,7 @@ export default function Home() {
               key={index}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 transform hover:scale-150 transition-transform duration-300 ease-in-out"
+              className="inline-flex text-white items-center gap-1.5 transform hover:scale-150 transition-transform duration-300 ease-in-out"
             >
               <span>{link.icon}</span>
             </a>
